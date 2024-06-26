@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ config.title }}</title>
+    <!-- Inclure Tailwind CSS via CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Inclure Iconify via CDN -->
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+    <style>
+        body::before {
+            content: "";
+            position: fixed;
+            /* Utiliser fixed pour que le fond reste statique */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("https://rdm.image.quintard.me/random-image");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            /* Le fond reste fixe lors du scroll */
+            filter: blur(10px);
+            z-index: -1;
+        }
+
+        body {
+            background-color: rgba(255, 255, 255, 0.5);
+            /* Couleur de fond transparente */
+        }
+    </style>
+
+</head>
+
+<body class="bg-gray-100 p-6 flex flex-col items-center justify-center min-h-screen">
+    <h1 class="text-3xl font-bold mb-6 text-center">{{ config.title }}</h1>
+    <div id="cards-container" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        {% for site in sites %}
+        <div class="card bg-white bg-opacity-80 rounded-lg shadow-md p-6 text-center cursor-pointer"
+            onclick="triggerVisit('{{ site.url }}')">
+            {% if site.icon %}
+            <div class="w-16 h-16 mx-auto mb-4">
+                {{ site.icon|safe }}
+            </div>
+            {% endif %}
+            <h2 class="text-lg font-semibold mb-2">{{ site.name }}</h2>
+            {% if 'webHook' in site %}
+            <div class="grid grid-cols-{{ site.webHook|length }} gap-2">
+                {% for hook in site.webHook %}
+                <div title="{{ hook.name }}"
+                    class="webhook-button bg-gray-700 hover:bg-gray-800 bg-opacity-60 p-1 w-12 h-12 text-white rounded-lg flex items-center justify-center mb-2 shadow-md"
+                    data-id="{{ hook.id }}" onclick="triggerWebhook(event, '{{ hook.id }}', '{{ hook.name }}')">
+                    {% if hook.icon %}
+                    {{ hook.icon|safe }}
+                    {% else %}
+                    <span>{{ hook.name }}</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Conteneur pour le toaster -->
+    <div id="toaster"
+        class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white p-4 rounded-lg shadow-lg w-1/3 hidden">
+        <div class="flex justify-between items-center">
+            <h3 class="font-bold">Webhook Response</h3>
+            <button onclick="closeToaster()" class="text-gray-400 hover:text-gray-200">&times;</button>
+        </div>
+        <pre id="toaster-content" class="mt-2 text-xs bg-gray-900 p-2 rounded"></pre>
+    </div>
+
+    <!-- Script JavaScript pour gérer les clics sur les webhooks -->
+    <script>
+        function triggerVisit(url) {
+            window.open(url, '_blank');
+        }
+
+        async function triggerWebhook(event, id, name) {
+            event.stopPropagation(); // Empêche la propagation du clic à la card parente
+
+            console.log(`Start Webhook '${id}'.`);
+            try {
+                const response = await fetch('/trigger', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                    })
+                });
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log(`Webhook '${name}' triggered successfully.`);
+                    showToaster(result.response.logEntry.output);
+                } else {
+                    console.error(`Failed to trigger webhook '${name}'.`);
+                }
+            } catch (error) {
+                console.error(`Error triggering webhook '${name}':`, error);
+            }
+        }
+
+        function showToaster(message) {
+            const toaster = document.getElementById('toaster');
+            const toasterContent = document.getElementById('toaster-content');
+            toasterContent.textContent = message;
+            toaster.classList.remove('hidden');
+            setTimeout(closeToaster, 60000); // Fermer automatiquement après 10 secondes
+        }
+
+        function closeToaster() {
+            const toaster = document.getElementById('toaster');
+            toaster.classList.add('hidden');
+        }
+    </script>
+</body>
+
+</html>
