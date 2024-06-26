@@ -13,7 +13,6 @@
         body::before {
             content: "";
             position: fixed;
-            /* Utiliser fixed pour que le fond reste statique */
             top: 0;
             left: 0;
             right: 0;
@@ -22,16 +21,83 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            /* Le fond reste fixe lors du scroll */
             filter: blur(10px);
             z-index: -1;
         }
 
         body {
             background-color: rgba(255, 255, 255, 0.5);
-            /* Couleur de fond transparente */
+        }
+
+        .webhook-button.loading {
+            background-color: #3490dc;
+            /* Couleur de chargement */
+            animation: loading-blink 1s infinite;
+        }
+
+        .webhook-button.success {
+            background-color: #38c172;
+            /* Couleur de succès */
+            animation: success-blink 1s infinite;
+        }
+
+        .webhook-button.error {
+            background-color: #e3342f;
+            /* Couleur d'erreur */
+            animation: error-blink 1s infinite;
+        }
+
+        @keyframes kitt {
+            0% {
+                box-shadow: 0 0 5px #3490dc, 0 0 10px #3490dc, 0 0 20px #3490dc, 0 0 30px #3490dc, 0 0 40px #3490dc, 0 0 50px #3490dc, 0 0 60px #3490dc, 0 0 70px #3490dc;
+            }
+
+            50% {
+                box-shadow: 0 0 5px #3490dc, 0 0 10px #3490dc, 0 0 20px #3490dc, 0 0 30px #3490dc, 0 0 40px #3490dc, 0 0 50px #3490dc, 0 0 60px #3490dc, 0 0 70px #3490dc, inset 0 -10px 50px #3490dc;
+            }
+
+            100% {
+                box-shadow: 0 0 5px #3490dc, 0 0 10px #3490dc, 0 0 20px #3490dc, 0 0 30px #3490dc, 0 0 40px #3490dc, 0 0 50px #3490dc, 0 0 60px #3490dc, 0 0 70px #3490dc;
+            }
+        }
+
+        @keyframes loading-blink {
+
+            0%,
+            100% {
+                box-shadow: 0 0 5px #3490dc, 0 0 10px #3490dc, 0 0 20px #3490dc, 0 0 30px #3490dc;
+            }
+
+            50% {
+                box-shadow: none;
+            }
+        }
+
+        @keyframes success-blink {
+
+            0%,
+            100% {
+                box-shadow: 0 0 5px #38c172, 0 0 10px #38c172, 0 0 20px #38c172, 0 0 30px #38c172;
+            }
+
+            50% {
+                box-shadow: none;
+            }
+        }
+
+        @keyframes error-blink {
+
+            0%,
+            100% {
+                box-shadow: 0 0 5px #e3342f, 0 0 10px #e3342f, 0 0 20px #e3342f, 0 0 30px #e3342f;
+            }
+
+            50% {
+                box-shadow: none;
+            }
         }
     </style>
+
 
 </head>
 
@@ -48,10 +114,10 @@
             {% endif %}
             <h2 class="text-lg font-semibold mb-2">{{ site.name }}</h2>
             {% if 'webHook' in site %}
-            <div class="grid grid-cols-{{ site.webHook|length }} gap-2">
+            <div class="flex">
                 {% for hook in site.webHook %}
                 <div title="{{ hook.name }}"
-                    class="webhook-button cursor-pointer bg-gray-700 hover:bg-gray-800 bg-opacity-60 p-1 w-12 h-12 text-white rounded-lg flex items-center justify-center mb-2 shadow-md"
+                    class="ml-2 webhook-button cursor-pointer bg-gray-700 hover:bg-gray-800 bg-opacity-60 p-1 w-12 h-12 text-white rounded-lg flex items-center justify-center mb-2 shadow-md"
                     data-id="{{ hook.id }}" onclick="triggerWebhook(event, '{{ hook.id }}', '{{ hook.name }}')">
                     {% if hook.icon %}
                     {{ hook.icon|safe }}
@@ -87,6 +153,9 @@
         async function triggerWebhook(event, id, name) {
             event.stopPropagation(); // Empêche la propagation du clic à la card parente
 
+            const button = event.currentTarget;
+            button.classList.add('loading');
+
             console.log(`Start Webhook '${id}'.`);
             try {
                 const response = await fetch('/trigger', {
@@ -98,16 +167,24 @@
                         id: id,
                     })
                 });
+                button.classList.remove('loading');
                 if (response.ok) {
                     const result = await response.json();
                     console.log(`Webhook '${name}' triggered successfully.`);
+                    button.classList.add('success');
                     showToaster(result.response.logEntry.output);
                 } else {
                     console.error(`Failed to trigger webhook '${name}'.`);
+                    button.classList.add('error');
                 }
             } catch (error) {
                 console.error(`Error triggering webhook '${name}':`, error);
+                button.classList.remove('loading');
+                button.classList.add('error');
             }
+            setTimeout(() => {
+                button.classList.remove('success', 'error');
+            }, 2000); // Réinitialiser l'état après 2 secondes
         }
 
         function showToaster(message) {
