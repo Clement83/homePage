@@ -74,6 +74,7 @@ Once the application is running, navigate to `http://localhost:5155` in your web
 
 - `USERNAME`: Basic HTTP auth username.
 - `PASSWORD`: Basic HTTP auth password.
+- `OLIVETIN_URL`: Url to your olivetin instance (https://myOlivetinInstance.me/api/StartActionByGetAndWait/)
 
 ## Contributing
 
