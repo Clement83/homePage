@@ -28,7 +28,7 @@ def index():
 def trigger_webhook():
     data = request.json
     id = data.get('id')
-    base_url = "https://cpanel.quintard.me/api/StartActionByGetAndWait/"
+    base_url =  os.getenv('OLIVETIN_URL')
     full_url = f"{base_url}{id}"
     username = os.getenv('WEBHOOK_USERNAME')
     password = os.getenv('WEBHOOK_PASSWORD')
