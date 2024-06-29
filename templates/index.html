@@ -47,20 +47,6 @@
             animation: error-blink 1s infinite;
         }
 
-        @keyframes kitt {
-            0% {
-                box-shadow: 0 0 5px #3490dc, 0 0 10px #3490dc, 0 0 20px #3490dc, 0 0 30px #3490dc, 0 0 40px #3490dc, 0 0 50px #3490dc, 0 0 60px #3490dc, 0 0 70px #3490dc;
-            }
-
-            50% {
-                box-shadow: 0 0 5px #3490dc, 0 0 10px #3490dc, 0 0 20px #3490dc, 0 0 30px #3490dc, 0 0 40px #3490dc, 0 0 50px #3490dc, 0 0 60px #3490dc, 0 0 70px #3490dc, inset 0 -10px 50px #3490dc;
-            }
-
-            100% {
-                box-shadow: 0 0 5px #3490dc, 0 0 10px #3490dc, 0 0 20px #3490dc, 0 0 30px #3490dc, 0 0 40px #3490dc, 0 0 50px #3490dc, 0 0 60px #3490dc, 0 0 70px #3490dc;
-            }
-        }
-
         @keyframes loading-blink {
 
             0%,
@@ -108,7 +94,12 @@
         <div class="card bg-white bg-opacity-80 rounded-lg shadow-md p-6 text-center {% if site.url %}cursor-pointer{% endif %} hover:bg-gray-100 hover:shadow-lg transition duration-300 ease-in-out"
             {% if site.url %}onclick="triggerVisit('{{ site.url }}')" {% endif %}>
             {% if site.icon %}
-            <div class="w-16 h-16 mx-auto mb-4">
+            <div class="mx-auto mb-4 
+            {% if 'webHook' not in site %} 
+                w-28 h-28 
+            {% else %} 
+                w-16 h-16 
+            {% endif %}">
                 {{ site.icon|safe }}
             </div>
             {% endif %}
@@ -134,12 +125,12 @@
 
     <!-- Conteneur pour le toaster -->
     <div id="toaster"
-        class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white p-4 rounded-lg shadow-lg w-full sm:w-3/4 md:w-2/3 hidden">
+        class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white p-4 rounded-lg shadow-lg max-h-full  w-full sm:w-3/4 md:w-2/3 hidden">
         <div class="flex justify-between items-center">
             <h3 class="font-bold">Webhook Response</h3>
             <button onclick="closeToaster()" class="text-gray-400 hover:text-gray-200 text-2xl">&times;</button>
         </div>
-        <pre id="toaster-content" class="mt-2 text-xs bg-gray-900 p-2 rounded"></pre>
+        <pre id="toaster-content" class="mt-2 text-xs bg-gray-900 p-2 rounded overflow-auto max-h-96"></pre>
     </div>
 
     <!-- Script JavaScript pour gérer les clics sur les webhooks -->

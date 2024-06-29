@@ -6,3 +6,6 @@ restart: stop start
 
 follow:
 	docker-compose up --build
+
+logs:
+	docker-compose logs --tail 100
