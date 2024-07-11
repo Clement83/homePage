@@ -1,12 +1,14 @@
 version: '3.8'
 
 services:
-  web:
-    restart: always
-    build: .
-    env_file:
-      - .env
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "5155:5000"
+      - "5155:3000"
+    command: npm run dev
     volumes:
-      - .:/app
+      - .:/usr/app
+    environment:
+      - NODE_ENV=development

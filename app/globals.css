@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("https://rdm.image.quintard.me/random-image");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  filter: blur(10px);
+  z-index: -1;
+}
+
+body {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.webhook-button.loading {
+  background-color: #3490dc;
+  animation: loading-blink 1s infinite;
+}
+
+.webhook-button.success {
+  background-color: #38c172;
+  animation: success-blink 1s infinite;
+}
+
+.webhook-button.error {
+  background-color: #e3342f;
+  animation: error-blink 1s infinite;
+}
+
+@keyframes loading-blink {
+  0%, 100% {
+    box-shadow: 0 0 5px #3490dc, 0 0 10px #3490dc, 0 0 20px #3490dc, 0 0 30px #3490dc;
+  }
+  50% {
+    box-shadow: none;
+  }
+}
+
+@keyframes success-blink {
+  0%, 100% {
+    box-shadow: 0 0 5px #38c172, 0 0 10px #38c172, 0 0 20px #38c172, 0 0 30px #38c172;
+  }
+  50% {
+    box-shadow: none;
+  }
+}
+
+@keyframes error-blink {
+  0%, 100% {
+    box-shadow: 0 0 5px #e3342f, 0 0 10px #e3342f, 0 0 20px #e3342f, 0 0 30px #e3342f;
+  }
+  50% {
+    box-shadow: none;
+  }
+}
+
