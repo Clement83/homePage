@@ -1,5 +1,5 @@
 import logging
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_from_directory
 import json
 import requests
 from requests.auth import HTTPBasicAuth
@@ -28,25 +28,46 @@ def index():
 def trigger_webhook():
     data = request.json
     id = data.get('id')
-    base_url =  os.getenv('OLIVETIN_URL')
+    base_url = os.getenv('OLIVETIN_URL')
     full_url = f"{base_url}{id}"
-    username = os.getenv('WEBHOOK_USERNAME')
-    password = os.getenv('WEBHOOK_PASSWORD')
 
     logger.info(f"Webhook triggered: {full_url}")
 
-    if not id or not username or not password:
-        logger.error("ID, username, or password missing in request")
-        return jsonify({"error": "ID, username, and password are required"}), 400
+    if not id:
+        logger.error("ID missing in request")
+        return jsonify({"error": "ID is required"}), 400
+
+    # Crée une session pour gérer les cookies
+    session = requests.Session()
+
+    # Ajoute les cookies de la requête entrante à la session
+    for cookie_name, cookie_value in request.cookies.items():
+        session.cookies.set(cookie_name, cookie_value)
 
     try:
-        response = requests.get(full_url, auth=HTTPBasicAuth(username, password))
+        # Fait la requête avec la session contenant les cookies
+        response = session.get(full_url)
         response.raise_for_status()  # Raise an HTTPError for bad responses
         logger.info(f"Webhook successful: {full_url}")
         return jsonify({"status": "success", "response": response.json()})
     except requests.exceptions.RequestException as e:
         logger.error(f"Webhook failed: {full_url}, error: {str(e)}")
         return jsonify({"status": "error", "error": str(e)}), 500
+
+# Route pour servir le fichier manifest.json
+@app.route('/manifest.json')
+def manifest():
+    return send_from_directory(directory='.', path='manifest.json', mimetype='application/json')
+
+# Route pour servir le fichier service-worker.js
+@app.route('/service-worker.js')
+def service_worker():
+    response = send_from_directory(directory='.', path='service-worker.js', mimetype='application/javascript')
+    # Désactiver le cache pour ce fichier
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
