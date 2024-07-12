@@ -5,11 +5,13 @@ import configuration from '../config'
 import { Toaster } from './components/toaster'
 import { HookButton } from './components/hookButton'
 import { Card } from './components/card'
+import { SearchableTitle } from './components/searchableTitle'
 
 export default function Home() {
   const { config, sites } = configuration
   const [toasterMessage, setToasterMessage] = useState('')
   const [toasterVisible, setToasterVisible] = useState(false)
+  const [filterText, setFilterText] = useState('')
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -108,9 +110,13 @@ export default function Home() {
           </a>
         </div>
       )}
-      <h1 className="text-3xl font-bold mb-6 text-center text-gray-200">{config.title}</h1>
+      <SearchableTitle text={config.title} onChange={(text) => setFilterText(text)} />
       <div id="cards-container" className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-        {sites.map((site, index) => (
+        {sites.filter(
+          (site) => !filterText.trim()
+            || site.name.toLowerCase().includes(filterText.toLowerCase())
+            || site.description?.toLowerCase().includes(filterText.toLowerCase())
+        ).map((site, index) => (
           <Card site={site} triggerVisit={triggerVisit} triggerWebhook={triggerWebhook} key={site.name} />
         ))}
       </div>
