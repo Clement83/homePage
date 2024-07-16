@@ -8,6 +8,7 @@ services:
     ports:
       - "5155:3000"
     command: npm run dev
+    restart: always
     volumes:
       - .:/usr/app
     environment:

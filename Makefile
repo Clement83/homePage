@@ -4,6 +4,9 @@ SSH_GROUP := $(shell id -g)
 
 start: 
 	docker compose up -d
+stop: 
+	docker compose stop
+restart: stop start
 
 npm-install-truc:
 	@echo "npm install"

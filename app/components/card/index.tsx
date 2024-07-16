@@ -21,10 +21,15 @@ export const Card = ({ site, triggerVisit, triggerWebhook }: CardProps) => {
             )}
             <h2 className="text-lg font-semibold mb-2">{site.name}</h2>
             {site.webHook && (
-                <div className="flex">
-                    {site.webHook.map((hook) => <HookButton hook={hook} onClick={triggerWebhook} key={hook.name} />)}
+                <div className="flex flex-wrap -mx-2">
+                    {site.webHook.map((hook) => (
+                        <div className="w-1/3" key={hook.name}>
+                            <HookButton hook={hook} onClick={triggerWebhook} />
+                        </div>
+                    ))}
                 </div>
             )}
+
         </div>
     )
 }
