@@ -7,6 +7,48 @@ export default {
             "icon": "<iconify-icon icon=\"ri:logout-circle-r-line\" width=\"100%\" height=\"100%\"></iconify-icon>"
         }
     },
+    "dataMonitor": [
+        {
+            "id": 1,
+            "queryKey": "checkMemoryUsageSpace",
+            "refreshInterval": 5000,
+            "threshold": 80,
+            "normalIcon": "ri:ram-fill",
+            "alertIcon": "ri:ram-fill",
+            "label": "Memory Usage",
+            "unit": "%"
+        },
+        {
+            "id": 2,
+            "queryKey": "checkCpuUsage",
+            "refreshInterval": 6000,
+            "threshold": 80,
+            "normalIcon": "clarity:cpu-outline-badged",
+            "alertIcon": "clarity:cpu-outline-alerted",
+            "label": "CPU Usage",
+            "unit": "%"
+        },
+        {
+            "id": 3,
+            "queryKey": "checkMediaPercent",
+            "refreshInterval": 60000,
+            "threshold": 80,
+            "normalIcon": "clarity:storage-outline-badged",
+            "alertIcon": "clarity:storage-solid-alerted",
+            "label": "Media Usage",
+            "unit": "%"
+        },
+        {
+            "id": 4,
+            "queryKey": "checkBackupPercent",
+            "refreshInterval": 60000,
+            "threshold": 80,
+            "normalIcon": "clarity:backup-outline-badged",
+            "alertIcon": "clarity:backup-outline-alerted",
+            "label": "Backup Usage",
+            "unit": "%"
+        }
+    ],
     "sites": [
         {
             "name": "Photos",

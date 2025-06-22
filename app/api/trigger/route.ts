@@ -14,7 +14,6 @@ export async function POST(req: NextRequest) {
     const baseUrl = process.env.OLIVETIN_URL
     const fullUrl = `${baseUrl}${id}`
 
-    console.info(`Webhook triggered: ${fullUrl}`, req.body)
 
     if (!id) {
         console.error("ID missing in request")
@@ -35,7 +34,6 @@ export async function POST(req: NextRequest) {
                     .join('; '),
             },
         })
-        console.info(`Webhook successful: ${fullUrl}`)
         return NextResponse.json(
             { response: response.data }, { status: 200 }
         )

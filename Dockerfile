@@ -1,2 +1,2 @@
-FROM node:20.3-slim
+FROM node:22.5-slim
 WORKDIR /usr/app

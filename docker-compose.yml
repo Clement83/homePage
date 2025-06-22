@@ -13,3 +13,18 @@ services:
       - .:/usr/app
     environment:
       - NODE_ENV=development
+
+  ollama:
+    build:
+      context: ./ollama
+      dockerfile: Dockerfile
+    network_mode: host
+    restart: always
+    volumes:
+      - ./config.js:/usr/src/app/config.js
+      - ./ollama:/usr/src/app
+    environment:
+      - NODE_ENV=production
+      - OLLAMA_URL=http://192.168.1.216:11434
+      - LOCAL_OLLAMA=http://127.0.0.1:11434
+      - REQUEST_TIMEOUT=120000
