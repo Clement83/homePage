@@ -21,7 +21,7 @@ services:
     network_mode: host
     restart: always
     volumes:
-      - ./config.js:/usr/src/app/config.js
+      - ./config.js:/usr/src/app/src/agents/config.ts
       - ./ollama:/usr/src/app
     environment:
       - NODE_ENV=production

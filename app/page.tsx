@@ -15,41 +15,37 @@ export default function Home() {
   const [filterText, setFilterText] = useState('')
   const toasterTimeout = useRef<NodeJS.Timeout | null>(null)
 
-  const triggerWebhook = async (event: any, id: string, name: string) => {
-    let button = null
-    if (event) {
-      event.stopPropagation()
+  const triggerWebhook = async (_event: any, id: string, name: string) => {
+    const button = document.getElementById(id);
 
-      button = event.currentTarget
-      button.classList.add('loading')
-    }
+    button?.classList.add("loading");
+    console.log(`Start Webhook '${id}'.`);
 
-    console.log(`Start Webhook '${id}'.`)
     try {
-      const response = await callApi(id)
-      button?.classList.remove('loading')
+      const response = await callApi(id);
+      button?.classList.remove("loading");
 
       if (response.ok) {
-        const result = await response.json()
-        console.log(`Webhook '${name}' triggered successfully.`)
-        button?.classList.add('success')
-        showToaster(result.response.logEntry.output)
+        const result = await response.json();
+        console.log(`Webhook '${name}' triggered successfully.`);
+        button?.classList.add("success");
+        showToaster(result.response.logEntry.output);
       } else {
-        console.error(`Failed to trigger webhook '${name}'.`)
-        button?.classList.add('error')
-        const result = await response.json()
-        showToaster(result.error)
+        const result = await response.json();
+        console.error(`Failed to trigger webhook '${name}'.`);
+        button?.classList.add("error");
+        showToaster(result.error);
       }
     } catch (error) {
-      console.error(`Error triggering webhook '${name}':`, error)
-      button?.classList.remove('loading')
-      button?.classList.add('error')
+      console.error(`Error triggering webhook '${name}':`, error);
+      button?.classList.remove("loading");
+      button?.classList.add("error");
     }
 
     setTimeout(() => {
-      button?.classList.remove('success', 'error')
-    }, 2000)
-  }
+      button?.classList.remove("success", "error");
+    }, 2000);
+  };
 
   const callApi = async (id: string) =>
     fetch('/api/trigger', {

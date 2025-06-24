@@ -12,6 +12,7 @@ export const HookButton = ({ hook, onClick }: HookButtonProps) => {
             title={hook.name}
             className="p-2 webhook-button cursor-pointer bg-gray-700 hover:bg-gray-800 bg-opacity-60 w-12 h-12 text-white rounded-lg flex items-center justify-center mb-2 shadow-md"
             data-id={hook.id}
+            id={hook.id}
             onClick={(e) => onClick(e, hook.id, hook.name)}
         >
             {hook.icon ? (

@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Icon } from "@iconify/react";
-import { FloatingBubble } from "./FloatingBubble";
 import LoadingDots from "../loadingDot";
 
 type Props = {
@@ -46,7 +45,9 @@ const ChatToggle = ({ triggerWebhook }: Props) => {
         const userMessage = message.trim();
         if (!userMessage) return;
 
-        setChatHistory((prev) => [...prev, { type: "user", text: userMessage }]);
+        const newHistory = [...chatHistory, { type: "user", text: userMessage } as Message];
+
+        setChatHistory(newHistory);
         setMessage("");
         setLoading(true);
 
@@ -56,13 +57,13 @@ const ChatToggle = ({ triggerWebhook }: Props) => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ message: userMessage }),
+                body: JSON.stringify({ messages: newHistory }),
             });
 
-            const data = await res.json();
+            const objectResponse = await res.json();
 
             try {
-                const objectResponse = JSON.parse(data.response);
+                //const objectResponse = JSON.parse(data.response);
                 const botMessage = objectResponse.message;
                 const action = objectResponse.action;
 

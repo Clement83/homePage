@@ -10,5 +10,5 @@ COPY . .
 EXPOSE 5156
 
 # Commande pour démarrer le serveur (adapter si nécessaire)
-CMD ["node", "server.js"]
+CMD ["npm", "run", "build:start"]
 
